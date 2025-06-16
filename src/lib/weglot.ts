@@ -2,7 +2,7 @@
 declare global {
   interface Window {
     Weglot?: {
-      initialize: (config: { api_key: string; [key: string]: any }) => void;
+      initialize: (config: { api_key: string; [key: string]: unknown }) => void;
       switchTo: (languageCode: string) => void;
       getCurrentLang: () => string;
       getLanguages: () => Array<{ code: string; name: string }>;

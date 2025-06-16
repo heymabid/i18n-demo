@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import crowdin, { Credentials } from '@crowdin/crowdin-api-client';
 
 export interface CrowdinConfig {

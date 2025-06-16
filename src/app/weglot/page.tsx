@@ -1,12 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function WeglotDemo() {
-  const [isWeglotLoaded, setIsWeglotLoaded] = useState(false)
-  const [showVisualEditor, setShowVisualEditor] = useState(false)
   const [isVisualEditorMode, setIsVisualEditorMode] = useState(false)
 
   useEffect(() => {
@@ -48,7 +45,7 @@ export default function WeglotDemo() {
               dynamic: true,
               translate_search: true
             })
-          setIsWeglotLoaded(true)
+          // Weglot loaded successfully
           console.log('✅ Weglot initialized successfully')
         } else {
           console.error('❌ Weglot not available after script load')
@@ -83,7 +80,7 @@ export default function WeglotDemo() {
       '1. In the new tab, go to Projects → Visual Editor\n' +
       '2. Enter this page URL: ' + currentUrl + '\n' +
       '3. The visual editor will load your page with edit capabilities\n\n' +
-      'Note: The visual editor runs on Weglot\'s platform, not directly on your website.'
+      'Note: The visual editor runs on Weglot&apos;s platform, not directly on your website.'
     )
     
     // Open dashboard in new tab
@@ -182,7 +179,7 @@ export default function WeglotDemo() {
                   Welcome to Our Platform
                 </h3>
                 <p className="text-gray-600">
-                  Discover amazing features that will transform your business. Our innovative solutions are designed to help you succeed in today's competitive market.
+                  Discover amazing features that will transform your business. Our innovative solutions are designed to help you succeed in today&apos;s competitive market.
                 </p>
               </div>
 
@@ -191,7 +188,7 @@ export default function WeglotDemo() {
                   Customer Success Stories
                 </h3>
                 <p className="text-gray-600">
-                  "This platform has revolutionized how we work. The results speak for themselves - 300% increase in productivity!"
+                  &quot;This platform has revolutionized how we work. The results speak for themselves - 300% increase in productivity!&quot;
                 </p>
                 <p className="text-sm text-gray-500 mt-2">- Sarah Johnson, CEO</p>
               </div>

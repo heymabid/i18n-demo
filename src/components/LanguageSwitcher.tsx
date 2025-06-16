@@ -21,7 +21,7 @@ const LANGUAGES: Language[] = [
 ];
 
 interface LanguageSwitcherProps {
-  service?: 'weglot' | 'crowdin' | 'lokalise';
+  service?: 'weglot' | 'crowdin';
   onLanguageChange?: (language: string) => void;
   className?: string;
 }
@@ -66,11 +66,7 @@ export default function LanguageSwitcher({
         console.log('Switching to', languageCode, 'with Crowdin');
         if (onLanguageChange) onLanguageChange(languageCode);
         break;
-      case 'lokalise':
-        // Handle Lokalise language switching (would require custom implementation)
-        console.log('Switching to', languageCode, 'with Lokalise');
-        if (onLanguageChange) onLanguageChange(languageCode);
-        break;
+
     }
   };
 

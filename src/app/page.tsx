@@ -60,7 +60,7 @@ export default function Home() {
               Welcome to Our i18n Demo Store
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Experience seamless internationalization with Weglot, Crowdin, and Lokalise. 
+              Experience seamless internationalization with Weglot and Crowdin. 
               This comprehensive demo showcases how each service handles both static content 
               and dynamic data translation.
             </p>
@@ -222,7 +222,7 @@ export default function Home() {
                 <li><Link href="/weglot" className="hover:text-white">Weglot Visual Editor</Link></li>
                 {/* Temporarily commented out while focusing on Weglot
                 <li><Link href="/crowdin" className="hover:text-white">Crowdin Setup</Link></li>
-                <li><Link href="/lokalise" className="hover:text-white">Lokalise Configuration</Link></li>
+
                 */}
               </ul>
             </div>

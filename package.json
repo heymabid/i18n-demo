@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.45.0",
-    "@lokalise/node-api": "^14.8.0",
     "axios": "^1.10.0",
     "next": "15.3.3",
     "next-intl": "^4.1.0",

@@ -1,20 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function CrowdinDemo() {
-  const [activeTab, setActiveTab] = useState('visual-editor')
   const [isInContextMode, setIsInContextMode] = useState(false)
   const [selectedText, setSelectedText] = useState('')
-  const [projectStats] = useState({
-    totalStrings: 247,
-    translatedStrings: 189,
-    approvedStrings: 156,
-    languages: 5,
-    contributors: 8
-  })
 
   // Simulate Crowdin's in-context editor
   const enableInContextEditor = () => {

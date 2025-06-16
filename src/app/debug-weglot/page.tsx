@@ -28,7 +28,7 @@ export default function DebugWeglot() {
                 });
                 setStatus('✅ Weglot initialized successfully! API key is valid.');
               } catch (error) {
-                setStatus(`❌ Weglot initialization failed: ${error.message}`);
+                setStatus(`❌ Weglot initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
               }
             } else {
               setStatus('❌ Weglot object not available after script load');
@@ -43,7 +43,7 @@ export default function DebugWeglot() {
         document.head.appendChild(script);
         
       } catch (error) {
-        setStatus(`❌ Error: ${error.message}`);
+        setStatus(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     };
 

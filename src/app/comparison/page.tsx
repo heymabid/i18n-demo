@@ -9,27 +9,19 @@ export default function ComparisonPage() {
   const services = [
     {
       name: 'Weglot',
-      color: 'blue',
       icon: 'W',
-      tagline: 'Quick Setup & Visual Translation',
-      bestFor: 'Small to medium websites that need fast implementation',
+      color: 'blue',
+      tagline: 'Visual Translation Platform',
+      bestFor: 'Quick website translation with visual editing',
       link: '/weglot'
     },
     {
       name: 'Crowdin',
-      color: 'purple', 
-      icon: 'C',
-      tagline: 'Enterprise Workflows & Team Management',
-      bestFor: 'Large teams with complex translation workflows',
+      icon: 'C', 
+      color: 'purple',
+      tagline: 'Enterprise Translation Management',
+      bestFor: 'Large teams with complex workflows',
       link: '/crowdin'
-    },
-    {
-      name: 'Lokalise',
-      color: 'green',
-      icon: 'L', 
-      tagline: 'Developer-Friendly & Agile',
-      bestFor: 'Development teams that want clean, powerful tools',
-      link: '/lokalise'
     }
   ]
 
@@ -41,155 +33,59 @@ export default function ComparisonPage() {
     { id: 'use-cases', label: 'Use Cases', icon: '🎯' }
   ]
 
-  const comparisonData = {
+  const comparisonData: Record<string, { title: string; data: Array<{ feature: string; weglot: string; crowdin: string }> }> = {
     overview: {
       title: 'Platform Overview',
       data: [
-        {
-          feature: 'Primary Approach',
-          weglot: 'Overlay translation layer',
-          crowdin: 'Workflow-based localization',
-          lokalise: 'Developer-focused platform'
-        },
-        {
-          feature: 'Target Audience',
-          weglot: 'Website owners, marketers',
-          crowdin: 'Enterprise teams, agencies',
-          lokalise: 'Developers, agile teams'
-        },
-        {
-          feature: 'Learning Curve',
-          weglot: 'Very low - plug and play',
-          crowdin: 'High - feature-rich',
-          lokalise: 'Medium - developer-friendly'
-        },
-        {
-          feature: 'Setup Time',
-          weglot: '< 1 hour',
-          crowdin: '1-2 weeks',
-          lokalise: '1-3 days'
-        }
+        { feature: 'Primary Focus', weglot: 'Website translation', crowdin: 'Enterprise localization' },
+        { feature: 'Target Users', weglot: 'SMBs, agencies', crowdin: 'Large teams, enterprises' },
+        { feature: 'Learning Curve', weglot: 'Easy - minimal setup', crowdin: 'Medium - feature-rich' },
+        { feature: 'Time to Launch', weglot: '< 1 hour', crowdin: '1-3 days' }
       ]
     },
     setup: {
       title: 'Setup & Integration',
       data: [
-        {
-          feature: 'Installation Method',
-          weglot: 'Script tag or React component',
-          crowdin: 'CLI + API + configuration files',
-          lokalise: 'API/CLI + SDK integration'
-        },
-        {
-          feature: 'Code Changes Required',
-          weglot: 'Minimal - just add script',
-          crowdin: 'Moderate - structured setup',
-          lokalise: 'Some - API integration'
-        },
-        {
-          feature: 'CI/CD Integration',
-          weglot: 'Limited',
-          crowdin: 'Excellent with webhooks',
-          lokalise: 'Good with GitHub Actions'
-        },
-        {
-          feature: 'Development Workflow',
-          weglot: 'External management',
-          crowdin: 'Integrated with dev process',
-          lokalise: 'Git-like workflow'
-        }
+        { feature: 'Installation', weglot: 'Script tag or plugin', crowdin: 'API/CLI + SDK integration' },
+        { feature: 'Technical Knowledge', weglot: 'None required', crowdin: 'Some - API integration' },
+        { feature: 'CI/CD Integration', weglot: 'Limited', crowdin: 'Good with GitHub Actions' },
+        { feature: 'Content Management', weglot: 'Automatic detection', crowdin: 'Git-like workflow' }
       ]
     },
     features: {
-      title: 'Feature Comparison',
+      title: 'Key Features',
       data: [
-        {
-          feature: 'Visual Editor',
-          weglot: '✅ In-context editing',
-          crowdin: '✅ Screenshots + context',
-          lokalise: '✅ Web editor'
-        },
-        {
-          feature: 'Workflow Management',
-          weglot: '❌ Basic',
-          crowdin: '✅ Advanced workflows',
-          lokalise: '✅ Structured process'
-        },
-        {
-          feature: 'Team Collaboration',
-          weglot: '⚠️ Limited',
-          crowdin: '✅ Extensive tools',
-          lokalise: '✅ Good collaboration'
-        },
-        {
-          feature: 'Quality Assurance',
-          weglot: '⚠️ Basic checks',
-          crowdin: '✅ Advanced QA',
-          lokalise: '✅ Good QA tools'
-        },
-        {
-          feature: 'Machine Translation',
-          weglot: '✅ Automatic',
-          crowdin: '✅ Multiple providers',
-          lokalise: '✅ AI-powered'
-        },
-        {
-          feature: 'Translation Memory',
-          weglot: '✅ Basic',
-          crowdin: '✅ Advanced TM',
-          lokalise: '✅ Smart suggestions'
-        }
+        { feature: 'Visual Editor', weglot: '✅ In-context editing', crowdin: '✅ Web editor' },
+        { feature: 'Workflow Management', weglot: '⚠️ Basic', crowdin: '✅ Structured process' },
+        { feature: 'Team Collaboration', weglot: '⚠️ Limited', crowdin: '✅ Good collaboration' },
+        { feature: 'Quality Assurance', weglot: '⚠️ Basic checks', crowdin: '✅ Good QA tools' },
+        { feature: 'Machine Translation', weglot: '✅ AI-powered', crowdin: '✅ AI-powered' },
+        { feature: 'Translation Memory', weglot: '✅ Built-in', crowdin: '✅ Smart suggestions' }
       ]
     },
     pricing: {
-      title: 'Pricing Structure',
+      title: 'Pricing Comparison',
       data: [
-        {
-          feature: 'Starting Price',
-          weglot: '$15/month',
-          crowdin: '$40/month',
-          lokalise: '$25/month'
-        },
-        {
-          feature: 'Pricing Model',
-          weglot: 'Page views + languages',
-          crowdin: 'Strings + features',
-          lokalise: 'Keys + team size'
-        },
-        {
-          feature: 'Free Tier',
-          weglot: '10,000 words',
-          crowdin: '60,000 strings',
-          lokalise: '1,000 keys'
-        },
-        {
-          feature: 'Enterprise Options',
-          weglot: '⚠️ Limited',
-          crowdin: '✅ Full enterprise suite',
-          lokalise: '✅ Custom plans'
-        }
+        { feature: 'Starting Price', weglot: '$15/month', crowdin: '$25/month' },
+        { feature: 'Pricing Model', weglot: 'Words translated', crowdin: 'Keys + team size' },
+        { feature: 'Free Tier', weglot: '10,000 words', crowdin: '1,000 keys' },
+        { feature: 'Enterprise Plans', weglot: '✅ Custom pricing', crowdin: '✅ Custom plans' }
       ]
     }
   }
 
   const useCases = [
     {
-      title: 'Small Business Website',
-      description: 'Marketing site with 10-20 pages, minimal development resources',
+      title: 'Marketing Website',
+      description: 'Company website with landing pages, blog, contact forms',
       recommendation: 'weglot',
-      reasoning: 'Quick setup, no technical knowledge required, visual editing for marketing content'
+      reasoning: 'Quick setup, visual editing, perfect for marketing content'
     },
     {
-      title: 'Enterprise SaaS Platform', 
-      description: 'Large application with complex workflows, multiple teams, compliance requirements',
+      title: 'SaaS Application',
+      description: 'Complex web application with user interface, help docs, notifications',
       recommendation: 'crowdin',
-      reasoning: 'Advanced workflow management, enterprise features, extensive collaboration tools'
-    },
-    {
-      title: 'Startup Mobile App',
-      description: 'React Native app with agile development, frequent releases, developer-focused team',
-      recommendation: 'lokalise',
-      reasoning: 'Developer-friendly API, clean UI, good automation without complexity'
+      reasoning: 'Structured workflow, team collaboration, handles complex UI strings'
     },
     {
       title: 'E-commerce Platform',
@@ -202,12 +98,6 @@ export default function ComparisonPage() {
       description: 'Technical documentation with version control, contributor workflow',
       recommendation: 'crowdin',
       reasoning: 'Git integration, contributor management, documentation-specific features'
-    },
-    {
-      title: 'React/Next.js App',
-      description: 'Modern web application with structured i18n, TypeScript, CI/CD pipeline',
-      recommendation: 'lokalise',
-      reasoning: 'Excellent TypeScript support, GitHub Actions, structured key management'
     }
   ]
 
@@ -219,7 +109,7 @@ export default function ComparisonPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Service Comparison</h1>
-              <p className="text-gray-600 mt-2">Compare Weglot, Crowdin, and Lokalise to find the best fit for your project</p>
+              <p className="text-gray-600 mt-2">Compare Weglot and Crowdin to find the best fit for your project</p>
             </div>
             <Link 
               href="/" 
@@ -233,7 +123,7 @@ export default function ComparisonPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Service Overview Cards */}
-        <section className="grid md:grid-cols-3 gap-8 mb-12">
+        <section className="grid md:grid-cols-2 gap-8 mb-12">
           {services.map((service) => (
             <div key={service.name} className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="flex items-center mb-4">
@@ -292,7 +182,6 @@ export default function ComparisonPage() {
                         <th className="text-left py-3 px-4 font-semibold text-gray-900">Feature</th>
                         <th className="text-left py-3 px-4 font-semibold text-blue-600">Weglot</th>
                         <th className="text-left py-3 px-4 font-semibold text-purple-600">Crowdin</th>
-                        <th className="text-left py-3 px-4 font-semibold text-green-600">Lokalise</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -301,7 +190,6 @@ export default function ComparisonPage() {
                           <td className="py-3 px-4 font-medium text-gray-900">{row.feature}</td>
                           <td className="py-3 px-4 text-gray-700">{row.weglot}</td>
                           <td className="py-3 px-4 text-gray-700">{row.crowdin}</td>
-                          <td className="py-3 px-4 text-gray-700">{row.lokalise}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -321,11 +209,9 @@ export default function ComparisonPage() {
                         </div>
                         <div className={`px-3 py-1 rounded-full text-sm font-medium ${
                           useCase.recommendation === 'weglot' ? 'bg-blue-100 text-blue-800' :
-                          useCase.recommendation === 'crowdin' ? 'bg-purple-100 text-purple-800' :
-                          'bg-green-100 text-green-800'
+                          'bg-purple-100 text-purple-800'
                         }`}>
-                          {useCase.recommendation === 'weglot' ? 'Weglot' :
-                           useCase.recommendation === 'crowdin' ? 'Crowdin' : 'Lokalise'}
+                          {useCase.recommendation === 'weglot' ? 'Weglot' : 'Crowdin'}
                         </div>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg">
@@ -344,7 +230,7 @@ export default function ComparisonPage() {
         {/* Decision Framework */}
         <section className="bg-white rounded-2xl p-8 shadow-sm">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Decision Framework</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🚀</span>
@@ -355,6 +241,7 @@ export default function ComparisonPage() {
                 <li>• Minimal technical setup</li>
                 <li>• Visual content editing</li>
                 <li>• Website translation focus</li>
+                <li>• Simple, straightforward workflow</li>
               </ul>
             </div>
             <div className="text-center">
@@ -367,18 +254,7 @@ export default function ComparisonPage() {
                 <li>• Large team collaboration</li>
                 <li>• Advanced project management</li>
                 <li>• Complex approval processes</li>
-              </ul>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚡</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Choose Lokalise if you prefer:</h3>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Developer-friendly tools</li>
-                <li>• Clean, modern interface</li>
-                <li>• Agile development workflows</li>
-                <li>• Balanced feature set</li>
+                <li>• Git integration and version control</li>
               </ul>
             </div>
           </div>
