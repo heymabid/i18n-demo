@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "extract-keys": "node scripts/extract-lokalise-keys.js"
   },
   "dependencies": {
     "@crowdin/crowdin-api-client": "^1.45.0",

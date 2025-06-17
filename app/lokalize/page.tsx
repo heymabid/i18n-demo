@@ -79,6 +79,7 @@ export default function LokalizeDemo() {
       locale: currentLocale,
       plainKey: false, // Using data attributes instead of plain keys
       usePanelOffset: true,
+
       onSave: (
         updatedTranslations,
         skippedTranslations,
