@@ -5,6 +5,25 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function WeglotDemo() {
   const [isVisualEditorMode, setIsVisualEditorMode] = useState(false)
+  
+  // Dynamic content states
+  const [showModal, setShowModal] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [dynamicCards, setDynamicCards] = useState<Array<{
+    id: number
+    title: string
+    description: string
+    price: string
+    badge: string
+  }>>([])
+  const [chatMessages, setChatMessages] = useState<Array<{
+    id: number
+    text: string
+    sender: string
+    timestamp: string
+  }>>([])
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
     // Check if we're in visual editor mode
@@ -85,6 +104,43 @@ export default function WeglotDemo() {
     
     // Open dashboard in new tab
     window.open(dashboardUrl, '_blank')
+  }
+
+  // Dynamic content functions
+  const addDynamicCard = () => {
+    const newCard = {
+      id: Date.now(),
+      title: `Dynamic Product ${dynamicCards.length + 1}`,
+      description: `This is a dynamically added product card. It was created at ${new Date().toLocaleTimeString()} and should be translatable by Weglot.`,
+      price: `$${(Math.random() * 100 + 10).toFixed(2)}`,
+      badge: 'New Arrival'
+    }
+    setDynamicCards([...dynamicCards, newCard])
+  }
+
+  const addChatMessage = () => {
+    const messages = [
+      'Hello! How can I help you today?',
+      'I am interested in your products.',
+      'Great! We have amazing deals running this week.',
+      'Can you tell me more about pricing?',
+      'Absolutely! Our plans start from $19/month.',
+      'That sounds perfect for my needs!'
+    ]
+    const newMessage = {
+      id: Date.now(),
+      text: messages[chatMessages.length % messages.length],
+      sender: chatMessages.length % 2 === 0 ? 'support' : 'user',
+      timestamp: new Date().toLocaleTimeString()
+    }
+    setChatMessages([...chatMessages, newMessage])
+  }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    alert(`Form submitted!\nName: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`)
+    setFormData({ name: '', email: '', message: '' })
+    setShowForm(false)
   }
 
   return (
@@ -312,6 +368,243 @@ export default function WeglotDemo() {
             </div>
           </div>
         </div>
+
+        {/* Dynamic Content Testing Section */}
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">🧪 Dynamic Content Testing</h3>
+          <p className="text-gray-600 mb-6">
+            Test how Weglot handles content that is dynamically added to the page after initial load. 
+            This is crucial for modern web applications with dynamic content.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Dynamic Cards Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-lg font-semibold text-gray-900">Dynamic Product Cards</h4>
+                <button
+                  onClick={addDynamicCard}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
+                >
+                  Add New Card
+                </button>
+              </div>
+              
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {dynamicCards.map((card) => (
+                  <div key={card.id} className="bg-gray-50 p-4 rounded-lg border">
+                    <div className="flex justify-between items-start mb-2">
+                      <h5 className="font-semibold text-gray-900">{card.title}</h5>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                        {card.badge}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-2">{card.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-bold text-green-600">{card.price}</span>
+                      <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {dynamicCards.length === 0 && (
+                  <p className="text-gray-500 text-center py-8 italic">
+                    No dynamic cards yet. Click &quot;Add New Card&quot; to test dynamic content translation.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Dynamic Chat Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-lg font-semibold text-gray-900">Live Chat Simulation</h4>
+                <button
+                  onClick={addChatMessage}
+                  className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm"
+                >
+                  Send Message
+                </button>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4 h-96 overflow-y-auto">
+                <div className="space-y-3">
+                  {chatMessages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-xs px-4 py-2 rounded-lg ${
+                          message.sender === 'user'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-gray-900 border'
+                        }`}
+                      >
+                        <p className="text-sm">{message.text}</p>
+                        <p className={`text-xs mt-1 ${
+                          message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                        }`}>
+                          {message.timestamp}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {chatMessages.length === 0 && (
+                    <p className="text-gray-500 text-center py-8 italic">
+                      No messages yet. Click &quot;Send Message&quot; to start a conversation.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal and Tooltip Tests */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">Interactive Elements</h4>
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Open Modal
+              </button>
+              
+              <div className="relative">
+                <button
+                  onClick={() => setShowTooltip(!showTooltip)}
+                  className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                >
+                  Toggle Tooltip
+                </button>
+                {showTooltip && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap">
+                    This is a dynamic tooltip that appears on demand!
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+              >
+                {showForm ? 'Hide Form' : 'Show Dynamic Form'}
+              </button>
+            </div>
+
+            {/* Dynamic Form */}
+            {showForm && (
+              <div className="mt-6 p-6 bg-orange-50 rounded-lg border-2 border-orange-200">
+                <h5 className="font-semibold text-gray-900 mb-4">Dynamic Contact Form</h5>
+                <form onSubmit={handleFormSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Message
+                    </label>
+                    <textarea
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md h-24"
+                      placeholder="Tell us about your inquiry..."
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+                    >
+                      Submit Form
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowForm(false)}
+                      className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-bold text-gray-900">Dynamic Modal</h3>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-gray-600 mb-6">
+                This modal content was dynamically rendered and should be translatable by Weglot. 
+                The modal includes various interactive elements to test translation coverage.
+              </p>
+              <div className="space-y-3">
+                <div className="p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+                  <p className="text-blue-800 text-sm">
+                    <strong>Info:</strong> Dynamic content like this modal tests real-world scenarios.
+                  </p>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                  >
+                    Close Modal
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert('Action completed!')
+                      setShowModal(false)
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Take Action
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

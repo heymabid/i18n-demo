@@ -46,6 +46,28 @@ export default function LokalizeDemo() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [previewMode, setPreviewMode] = useState(true) // New: for non-authenticated users
+  
+  // Dynamic content states
+  const [showModal, setShowModal] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [dynamicCards, setDynamicCards] = useState<Array<{
+    id: number
+    slug: string
+    title: string
+    description: string
+    price: string
+    badge: string
+  }>>([])
+  const [chatMessages, setChatMessages] = useState<Array<{
+    id: number
+    slug: string
+    text: string
+    sender: string
+    timestamp: string
+  }>>([])
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [showForm, setShowForm] = useState(false)
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -71,6 +93,44 @@ export default function LokalizeDemo() {
     }
   }, [isDropdownOpen])
 
+  // Auto-detect dynamic Lokalise content
+  useEffect(() => {
+    // Create a MutationObserver to watch for new data-lokalise elements
+    const observer = new MutationObserver((mutations) => {
+      let hasNewLokaliseElements = false
+      
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const element = node as Element
+              // Check if the added element or its children have data-lokalise attributes
+              if (element.hasAttribute?.('data-lokalise') || 
+                  element.querySelector?.('[data-lokalise]')) {
+                hasNewLokaliseElements = true
+              }
+            }
+          })
+        }
+      })
+      
+      // If new Lokalise elements were found, notify Lokalise to update
+      if (hasNewLokaliseElements) {
+        console.log('🔄 Auto-detected new Lokalise elements, refreshing...')
+        document.dispatchEvent(new Event('lokalise-update-elements'))
+      }
+    })
+    
+    // Start observing the entire document for dynamic content
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+    
+    // Cleanup on unmount
+    return () => observer.disconnect()
+  }, [])
+
   // Initialize Lokalise LiveJS
   useEffect(() => {
     // Configure Lokalise LiveJS
@@ -79,6 +139,7 @@ export default function LokalizeDemo() {
       locale: currentLocale,
       plainKey: false, // Using data attributes instead of plain keys
       usePanelOffset: true,
+
 
       onSave: (
         updatedTranslations,
@@ -118,6 +179,7 @@ export default function LokalizeDemo() {
     const handleAuthStateChange = (event: CustomEvent) => {
       setIsAuthenticated(event.detail.authenticated)
       setUserInfo(event.detail.user)
+      setPreviewMode(!event.detail.authenticated) // Enable preview mode when not authenticated
     }
 
     const handleOnSave = (event: CustomEvent) => {
@@ -151,6 +213,51 @@ export default function LokalizeDemo() {
     setIsDropdownOpen(false)
     // Update Lokalise locale
     document.dispatchEvent(new CustomEvent('lokalise-update-locale', { detail: newLocale }))
+  }
+
+  // Dynamic content functions
+  const addDynamicCard = () => {
+    const productNumber = dynamicCards.length + 1
+    const slug = `product-${productNumber}`
+    const newCard = {
+      id: Date.now(),
+      slug: slug,
+      title: `Dynamic Product ${productNumber}`,
+      description: `This is a dynamically added product card. It was created at ${new Date().toLocaleTimeString()} and should be translatable by Lokalise LiveJS.`,
+      price: `$${(Math.random() * 100 + 10).toFixed(2)}`,
+      badge: 'New Arrival'
+    }
+    setDynamicCards([...dynamicCards, newCard])
+  }
+
+  const addChatMessage = () => {
+    const messageData = [
+      { text: 'Hello! How can I help you today?', slug: 'greeting' },
+      { text: 'I am interested in your products.', slug: 'interest' },
+      { text: 'Great! We have amazing deals running this week.', slug: 'deals' },
+      { text: 'Can you tell me more about pricing?', slug: 'pricing-question' },
+      { text: 'Absolutely! Our plans start from $19/month.', slug: 'pricing-answer' },
+      { text: 'That sounds perfect for my needs!', slug: 'satisfaction' }
+    ]
+    
+    const messageIndex = chatMessages.length % messageData.length
+    const selectedMessage = messageData[messageIndex]
+    
+    const newMessage = {
+      id: Date.now(),
+      slug: selectedMessage.slug,
+      text: selectedMessage.text,
+      sender: chatMessages.length % 2 === 0 ? 'support' : 'user',
+      timestamp: new Date().toLocaleTimeString()
+    }
+    setChatMessages([...chatMessages, newMessage])
+  }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    alert(`Form submitted!\nName: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`)
+    setFormData({ name: '', email: '', message: '' })
+    setShowForm(false)
   }
 
 
@@ -303,6 +410,26 @@ export default function LokalizeDemo() {
                       <strong>✅ Authenticated!</strong> Logged in as {userInfo.name} ({userInfo.email}).
                       You can now edit translations by clicking on any text below.
                     </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {previewMode && (
+              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">Preview Mode</h3>
+                    <div className="mt-2 text-sm text-blue-700">
+                      <p><strong>Language Switching Limitation:</strong> Lokalise LiveJS requires authentication to switch languages.</p>
+                      <p className="mt-1"><strong>Missing Translation Behavior:</strong> When translations don&apos;t exist, content disappears instead of showing fallback text.</p>
+                      <p className="mt-1"><strong>This is normal behavior</strong> - LiveJS is designed for translators, not end users.</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -475,6 +602,369 @@ export default function LokalizeDemo() {
               </button>
             </div>
           </div>
+
+          {/* Dynamic Content Testing Section */}
+          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h3 
+              className="text-2xl font-bold text-gray-900 mb-6"
+              data-lokalise 
+              data-key="dynamic.section.title"
+            >
+              🧪 Dynamic Content Testing
+            </h3>
+            <p 
+              className="text-gray-600 mb-6"
+              data-lokalise 
+              data-key="dynamic.section.description"
+            >
+              Test how Lokalise LiveJS handles content that is dynamically added to the page after initial load. 
+              This is crucial for modern web applications with dynamic content.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Dynamic Cards Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 
+                    className="text-lg font-semibold text-gray-900"
+                    data-lokalise 
+                    data-key="dynamic.cards.section_title"
+                  >
+                    Dynamic Product Cards
+                  </h4>
+                  <button
+                    onClick={addDynamicCard}
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
+                    data-lokalise 
+                    data-key="dynamic.cards.add_button"
+                  >
+                    Add New Card
+                  </button>
+                </div>
+                
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {dynamicCards.map((card) => (
+                    <div key={card.id} className="bg-gray-50 p-4 rounded-lg border">
+                      <div className="flex justify-between items-start mb-2">
+                        <h5 
+                          className="font-semibold text-gray-900"
+                          data-lokalise 
+                          data-key={`dynamic.card.title.${card.slug}`}
+                        >
+                          {card.title}
+                        </h5>
+                        <span 
+                          className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                          data-lokalise 
+                          data-key={`dynamic.card.badge.${card.slug}`}
+                        >
+                          {card.badge}
+                        </span>
+                      </div>
+                      <p 
+                        className="text-gray-600 text-sm mb-2"
+                        data-lokalise 
+                        data-key={`dynamic.card.description.${card.slug}`}
+                      >
+                        {card.description}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-bold text-green-600">{card.price}</span>
+                        <button 
+                          className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
+                          data-lokalise 
+                          data-key="dynamic.card.add_to_cart"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {dynamicCards.length === 0 && (
+                    <p 
+                      className="text-gray-500 text-center py-8 italic"
+                      data-lokalise 
+                      data-key="dynamic.cards.empty_state"
+                    >
+                      No dynamic cards yet. Click &quot;Add New Card&quot; to test dynamic content translation.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Dynamic Chat Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 
+                    className="text-lg font-semibold text-gray-900"
+                    data-lokalise 
+                    data-key="dynamic.chat.section_title"
+                  >
+                    Live Chat Simulation
+                  </h4>
+                  <button
+                    onClick={addChatMessage}
+                    className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm"
+                    data-lokalise 
+                    data-key="dynamic.chat.send_button"
+                  >
+                    Send Message
+                  </button>
+                </div>
+                
+                <div className="bg-gray-50 rounded-lg p-4 h-96 overflow-y-auto">
+                  <div className="space-y-3">
+                    {chatMessages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-xs px-4 py-2 rounded-lg ${
+                            message.sender === 'user'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-white text-gray-900 border'
+                          }`}
+                        >
+                          <p 
+                            className="text-sm"
+                            data-lokalise 
+                            data-key={`dynamic.chat.message.${message.slug}`}
+                          >
+                            {message.text}
+                          </p>
+                          <p className={`text-xs mt-1 ${
+                            message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                          }`}>
+                            {message.timestamp}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {chatMessages.length === 0 && (
+                      <p 
+                        className="text-gray-500 text-center py-8 italic"
+                        data-lokalise 
+                        data-key="dynamic.chat.empty_state"
+                      >
+                        No messages yet. Click &quot;Send Message&quot; to start a conversation.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal and Tooltip Tests */}
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h4 
+                className="text-lg font-semibold text-gray-900 mb-4"
+                data-lokalise 
+                data-key="dynamic.interactive.section_title"
+              >
+                Interactive Elements
+              </h4>
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                  data-lokalise 
+                  data-key="dynamic.buttons.open_modal"
+                >
+                  Open Modal
+                </button>
+                
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTooltip(!showTooltip)}
+                    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                    data-lokalise 
+                    data-key="dynamic.buttons.toggle_tooltip"
+                  >
+                    Toggle Tooltip
+                  </button>
+                  {showTooltip && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap">
+                      <span 
+                        data-lokalise 
+                        data-key="dynamic.tooltip.text"
+                      >
+                        This is a dynamic tooltip that appears on demand!
+                      </span>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => setShowForm(!showForm)}
+                  className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+                  data-lokalise 
+                  data-key={showForm ? "dynamic.buttons.hide_form" : "dynamic.buttons.show_form"}
+                >
+                  {showForm ? 'Hide Form' : 'Show Dynamic Form'}
+                </button>
+              </div>
+
+              {/* Dynamic Form */}
+              {showForm && (
+                <div className="mt-6 p-6 bg-orange-50 rounded-lg border-2 border-orange-200">
+                  <h5 
+                    className="font-semibold text-gray-900 mb-4"
+                    data-lokalise 
+                    data-key="dynamic.form.title"
+                  >
+                    Dynamic Contact Form
+                  </h5>
+                  <form onSubmit={handleFormSubmit} className="space-y-4">
+                    <div>
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                        data-lokalise 
+                        data-key="dynamic.form.name.label"
+                      >
+                        Your Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        placeholder="Enter your full name"
+                        data-lokalise 
+                        data-key="dynamic.form.name.placeholder" 
+                        data-type-placeholder
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                        data-lokalise 
+                        data-key="dynamic.form.email.label"
+                      >
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        placeholder="your@email.com"
+                        data-lokalise 
+                        data-key="dynamic.form.email.placeholder" 
+                        data-type-placeholder
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                        data-lokalise 
+                        data-key="dynamic.form.message.label"
+                      >
+                        Message
+                      </label>
+                      <textarea
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md h-24"
+                        placeholder="Tell us about your inquiry..."
+                        data-lokalise 
+                        data-key="dynamic.form.message.placeholder" 
+                        data-type-placeholder
+                        required
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+                        data-lokalise 
+                        data-key="dynamic.form.submit"
+                      >
+                        Submit Form
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowForm(false)}
+                        className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                        data-lokalise 
+                        data-key="dynamic.form.cancel"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Modal */}
+          {showModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 
+                    className="text-xl font-bold text-gray-900"
+                    data-lokalise 
+                    data-key="dynamic.modal.title"
+                  >
+                    Dynamic Modal
+                  </h3>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <p 
+                  className="text-gray-600 mb-6"
+                  data-lokalise 
+                  data-key="dynamic.modal.description"
+                >
+                  This modal content was dynamically rendered and should be translatable by Lokalise LiveJS. 
+                  The modal includes various interactive elements to test translation coverage.
+                </p>
+                <div className="space-y-3">
+                  <div className="p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+                    <p 
+                      className="text-blue-800 text-sm"
+                      data-lokalise 
+                      data-key="dynamic.modal.info"
+                    >
+                      <strong>Info:</strong> Dynamic content like this modal tests real-world scenarios.
+                    </p>
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      onClick={() => setShowModal(false)}
+                      className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                      data-lokalise 
+                      data-key="dynamic.modal.close"
+                    >
+                      Close Modal
+                    </button>
+                    <button
+                      onClick={() => {
+                        alert('Action completed!')
+                        setShowModal(false)
+                      }}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                      data-lokalise 
+                      data-key="dynamic.modal.action"
+                    >
+                      Take Action
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Instructions Panel */}
           <div className="bg-white rounded-xl shadow-lg p-8">
